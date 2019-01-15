@@ -18,9 +18,15 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     // this.dishes = this.dishService.getDishes();
+
     // To Handle Promise
+    // this.dishService.getDishes()
+    //   .then(dishes => this.dishes = dishes);
+
+    //If we use observable type then we need to change from .then() to .subscribe()
     this.dishService.getDishes()
-      .then(dishes => this.dishes = dishes);
+      .subscribe(dishes => this.dishes = dishes);
+
   }
 
   onSelect(dish: Dish) {
