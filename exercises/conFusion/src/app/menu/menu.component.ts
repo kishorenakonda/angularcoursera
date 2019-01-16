@@ -1,4 +1,4 @@
-import { Component, OnInit , Inject} from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { Dish } from '../shared/dish';
 // import { DISHES } from '../shared/dishes';
 import { DishService } from '../services/dish.service';
@@ -13,6 +13,7 @@ export class MenuComponent implements OnInit {
   // dishes: Dish[] = DISHES;
   dishes: Dish[];
   // selectedDish: Dish;
+  errorMessage: string;
 
   constructor(private dishService: DishService,
     @Inject('BaseURL') private baseURL) { }
@@ -26,7 +27,9 @@ export class MenuComponent implements OnInit {
 
     //If we use observable type then we need to change from .then() to .subscribe()
     this.dishService.getDishes()
-      .subscribe(dishes => this.dishes = dishes);
+      // .subscribe(dishes => this.dishes = dishes);
+      .subscribe(dishes => this.dishes = dishes,
+        errormess => this.errorMessage = <any>errormess); //handling error
 
   }
 

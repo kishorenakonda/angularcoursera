@@ -5,14 +5,15 @@ import { delay } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { baseURL } from '../shared/baseurl';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
+import { ProcessHTTPMsgService } from './process-httpmsg.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PromotionService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private processHTTPMsgService: ProcessHTTPMsgService) { }
 
   //when observable is used as type then remove .toPromise() method and change the type from Promise to Observable
 
@@ -31,7 +32,11 @@ export class PromotionService {
     // return of(PROMOTIONS).pipe(delay(2000));
 
     //using http service
-    return this.http.get<Promotion[]>(baseURL + 'promotions');
+    // return this.http.get<Promotion[]>(baseURL + 'promotions');
+
+    //using http service and handling error
+    return this.http.get<Promotion[]>(baseURL + 'promotions')
+      .pipe(catchError(this.processHTTPMsgService.handleError));
   }
 
   getPromotion(id: string): Observable<Promotion> {
@@ -41,7 +46,9 @@ export class PromotionService {
     //   setTimeout(() => resolve(PROMOTIONS.filter((promo) => (promo.id === id))[0]), 2000);
     // });
     // return of(PROMOTIONS.filter((promo) => (promo.id === id))[0]).pipe(delay(2000));
-    return this.http.get<Promotion>(baseURL + 'promotions/' + id);
+    // return this.http.get<Promotion>(baseURL + 'promotions/' + id);
+    return this.http.get<Promotion>(baseURL + 'promotions/' + id)
+      .pipe(catchError(this.processHTTPMsgService.handleError));
   }
 
   getFeaturedPromotion(): Observable<Promotion> {
@@ -51,6 +58,8 @@ export class PromotionService {
     //   setTimeout(() => resolve(PROMOTIONS.filter((promotion) => promotion.featured)[0]), 2000);
     // });
     // return of(PROMOTIONS.filter((promotion) => promotion.featured)[0]).pipe(delay(2000));
-    return this.http.get<Promotion>(baseURL + 'promotions?featured=true').pipe(map(leader => leader[0]));
+    // return this.http.get<Promotion>(baseURL + 'promotions?featured=true').pipe(map(leader => leader[0]));
+    return this.http.get<Promotion>(baseURL + 'promotions?featured=true').pipe(map(leader => leader[0]))
+      .pipe(catchError(this.processHTTPMsgService.handleError));
   }
 }

@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Leader } from '../shared/leader';
 import { LEADERS } from '../shared/leaders';
-import { resolve } from 'path';
+// import { resolve } from 'path';
 import { of, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { baseURL } from '../shared/baseurl';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
+import { ProcessHTTPMsgService } from './process-httpmsg.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LeaderService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private processHTTPMsgService: ProcessHTTPMsgService) { }
 
   //when observable type is used. Remove .toPromise() method from the return function.
 
@@ -32,7 +33,11 @@ export class LeaderService {
     // return of(LEADERS).pipe(delay(2000));
 
     //using http service
-    return this.http.get<Leader[]>(baseURL + 'leadership');
+    // return this.http.get<Leader[]>(baseURL + 'leadership');
+
+    //using http service and handling error
+    return this.http.get<Leader[]>(baseURL + 'leadership')
+      .pipe(catchError(this.processHTTPMsgService.handleError));
   }
 
   getLeader(id: string): Observable<Leader> {
@@ -41,7 +46,9 @@ export class LeaderService {
     // return new Promise(resolve => {
     //   setTimeout(() => resolve(LEADERS.filter((leader) => { leader.id === id })[0]), 2000);
     // });
-    return this.http.get<Leader>(baseURL + 'leadership/' + id);
+    // return this.http.get<Leader>(baseURL + 'leadership/' + id);
+    return this.http.get<Leader>(baseURL + 'leadership/' + id)
+      .pipe(catchError(this.processHTTPMsgService.handleError));
   }
 
   getFeaturedLeader(): Observable<Leader> {
@@ -50,6 +57,8 @@ export class LeaderService {
     // return new Promise(resolve => {
     //   setTimeout(() => resolve(LEADERS.filter((leader) => leader.featured)[0]), 2000);
     // });
-    return this.http.get<Leader>(baseURL + 'leadership?featured=true').pipe(map(leader => leader[0]));
+    return this.http.get<Leader>(baseURL + 'leadership?featured=true')
+      .pipe(map(leader => leader[0]))
+      .pipe(catchError(this.processHTTPMsgService.handleError));
   }
 }
