@@ -4,16 +4,19 @@ import { LEADERS } from '../shared/leaders';
 import { resolve } from 'path';
 import { of, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { baseURL } from '../shared/baseurl';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LeaderService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   //when observable type is used. Remove .toPromise() method from the return function.
-  
+
   getLeaders(): Observable<Leader[]> {
     // return LEADERS;
     // return Promise.resolve(LEADERS);
@@ -26,7 +29,10 @@ export class LeaderService {
     // return of(LEADERS).pipe(delay(2000)).toPromise();
 
     //using observable
-    return of(LEADERS).pipe(delay(2000));
+    // return of(LEADERS).pipe(delay(2000));
+
+    //using http service
+    return this.http.get<Leader[]>(baseURL + 'leadership');
   }
 
   getLeader(id: string): Observable<Leader> {
@@ -35,7 +41,7 @@ export class LeaderService {
     // return new Promise(resolve => {
     //   setTimeout(() => resolve(LEADERS.filter((leader) => { leader.id === id })[0]), 2000);
     // });
-    return of(LEADERS.filter((leader) => { leader.id === id })[0]).pipe(delay(2000));
+    return this.http.get<Leader>(baseURL + 'leadership/' + id);
   }
 
   getFeaturedLeader(): Observable<Leader> {
@@ -44,6 +50,6 @@ export class LeaderService {
     // return new Promise(resolve => {
     //   setTimeout(() => resolve(LEADERS.filter((leader) => leader.featured)[0]), 2000);
     // });
-    return of(LEADERS.filter((leader) => leader.featured)[0]).pipe(delay(2000));
+    return this.http.get<Leader>(baseURL + 'leadership?featured=true').pipe(map(leader => leader[0]));
   }
 }
