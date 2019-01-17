@@ -1,4 +1,4 @@
-<div class="container" fxLayout="column" fxLayoutGap="10px" [@expand]>
+<div class="container" fxLayout="column" fxLayoutGap="10px">
 
   <div fxFlex>
     <div>
@@ -34,59 +34,74 @@
     </div>
   </div>
 
-
-
   <div fxFlex fxFlexOffset="20px" class="form-size">
     <h3>Send us your Feedback</h3>
     <p>{{ feedbackForm.value | json }} {{ feedbackForm.status | json }}</p>
-
-    <form novalidate [formGroup]="feedbackForm" #fform="ngForm" (ngSubmit)="onSubmit()">
+    <form novalidate [formGroup]="feedbackForm" #fform="ngForm" (ngSubmit)="onSubmit()" *ngIf="showform">
       <p>
         <mat-form-field class="half-width">
           <input matInput formControlName="firstname" placeholder="First Name" type="text" required>
-          <!-- *ngIf="feedbackForm.get('firstname').hasError('required') && feedbackForm.get('firstname').touched" -->
-          <mat-error *ngIf="formErrors.firstname"> {{formErrors.firstname}}</mat-error>
+          <mat-error *ngIf="formErrors.firstname">
+            {{ formErrors.firstname}}
+          </mat-error>
         </mat-form-field>
-
         <mat-form-field class="half-width">
           <input matInput formControlName="lastname" placeholder="Last Name" type="text" required>
-          <!-- *ngIf="feedbackForm.get('lastname').hasError('required') && feedbackForm.get('lastname').touched" -->
-          <mat-error *ngIf="formErrors.lastname"> {{formErrors.lastname}} </mat-error>
+          <mat-error *ngIf="formErrors.lastname">
+            {{ formErrors.lastname }}
+          </mat-error>
         </mat-form-field>
       </p>
-
       <p>
         <mat-form-field class="half-width">
           <input matInput formControlName="telnum" placeholder="Tel. Number" type="tel" pattern="[0-9]*" required>
-          <!-- *ngIf="feedbackForm.get('telnum').hasError('required') && feedbackForm.get('telnum').touched" -->
-          <mat-error *ngIf="formErrors.telnum"> {{ formErrors.telnum}} </mat-error>
+          <mat-error *ngIf="formErrors.telnum">
+            {{ formErrors.telnum }}
+          </mat-error>
         </mat-form-field>
-
         <mat-form-field class="half-width">
-          <input matInput formControlName="email" placeholder="Email" type="email" required>
-          <!-- *ngIf="feedbackForm.get('email').hasError('required') && feedbackForm.get('email').touched" -->
-          <mat-error *ngIf="formErrors.email"> {{ formErrors.email}} </mat-error>
+          <input matInput formControlName="email" placeholder="Email" type="email" email required>
+          <mat-error *ngIf="formErrors.email">
+            {{ formErrors.email }}
+          </mat-error>
         </mat-form-field>
       </p>
-      
       <table class="form-size">
         <td>
-          <mat-slide-toggle formControlName="agree">May we contact you?</mat-slide-toggle>
+          <mat-slide-toggle formControlName='agree'>May we contact you?</mat-slide-toggle>
         </td>
         <td>
           <mat-select placeholder="How?" formControlName="contacttype">
-            <mat-option *ngFor="let ctype of contactType" [value]="ctype">
+            <mat-option *ngFor="let ctype of contactType" [value]='ctype'>
               {{ ctype }}
             </mat-option>
           </mat-select>
         </td>
+
       </table>
       <p>
         <mat-form-field class="full-width">
           <textarea matInput formControlName="message" placeholder="Your Feedback" rows=12></textarea>
         </mat-form-field>
       </p>
-      <button type="submit" mat-button class="background-primary text-floral-white">Submit</button>
+      <button type="submit" mat-button class="background-primary text-floral-white" [disabled]="feedbackForm.invalid">Submit</button>
     </form>
+
   </div>
+  <div *ngIf="showfeedback">
+    <h3>Your Submission</h3>
+    <p>First Name: {{feedback_confirm.firstname}}</p>
+    <p>Last Name: {{feedback_confirm.lastname}}</p>
+    <p>Tel. number: {{feedback_confirm.telnum}}</p>
+    <p>Email: {{feedback_confirm.email}}</p>
+    <p>Contact you?: {{feedback_confirm.agree}}</p>
+    <p>How?: {{feedback_confirm.contacttype}}</p>
+    <p>Feedback: {{feedback_confirm.message}}</p>
+  </div>
+
+  <div *ngIf="showspinner">
+    <mat-spinner></mat-spinner>
+    <h4>Submitting Form ... Please Wait</h4>
+  </div>
+
 </div>
