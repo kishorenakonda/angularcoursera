@@ -51,6 +51,12 @@
           "comment": "Nice Dish",
           "rating": 4,
           "date": "2019-01-17T05:55:05.444Z"
+        },
+        {
+          "author": "Test Author",
+          "comment": "Test Comment",
+          "rating": "5",
+          "date": "2019-01-18T12:34:15.968Z"
         }
       ]
     },
